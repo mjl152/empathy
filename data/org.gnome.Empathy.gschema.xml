@@ -48,6 +48,11 @@
       <summary>Show offline contacts</summary>
       <description>Whether to show contacts that are offline in the contact list.</description>
     </key>
+    <key name="avatar-size" type="u">
+      <default>48</default>
+      <summary>Avatar size</summary>
+      <description>Size of the avatars in the contact list</description>
+    </key>
     <key name="show-balance-in-roster" type="b">
       <default>true</default>
       <summary>Show Balance in contact list</summary>

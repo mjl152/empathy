@@ -77,6 +77,7 @@ G_BEGIN_DECLS
 #define EMPATHY_PREFS_UI_CHAT_WINDOW_PANED_POS     "chat-window-paned-pos"
 #define EMPATHY_PREFS_UI_SHOW_OFFLINE              "show-offline"
 #define EMPATHY_PREFS_UI_SHOW_GROUPS               "show-groups"
+#define EMPATHY_PREFS_UI_AVATAR_SIZE               "avatar-size"
 
 #define EMPATHY_PREFS_HINTS_SCHEMA EMPATHY_PREFS_SCHEMA ".hints"
 #define EMPATHY_PREFS_HINTS_CLOSE_MAIN_WINDOW      "close-main-window"

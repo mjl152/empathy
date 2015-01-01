@@ -2,15 +2,15 @@
 #include "empathy-roster-contact.h"
 
 #include <glib/gi18n-lib.h>
+#include <gio/gio.h>
 #include <tp-account-widgets/tpaw-images.h>
 #include <tp-account-widgets/tpaw-pixbuf-utils.h>
 
 #include "empathy-ui-utils.h"
 #include "empathy-utils.h"
+#include "empathy-gsettings.h"
 
 G_DEFINE_TYPE (EmpathyRosterContact, empathy_roster_contact, GTK_TYPE_LIST_BOX_ROW)
-
-#define AVATAR_SIZE 48
 
 enum
 {
@@ -36,6 +36,7 @@ struct _EmpathyRosterContactPriv
   gchar *group;
 
   GtkWidget *avatar;
+  GSettings *gsettings_ui;
   GtkWidget *first_line_alig;
   GtkWidget *alias;
   GtkWidget *presence_msg;
@@ -47,6 +48,13 @@ struct _EmpathyRosterContactPriv
 
   gboolean online;
 };
+
+
+static guint
+avatar_size (EmpathyRosterContact *self) {
+  return g_settings_get_uint(self->priv->gsettings_ui, EMPATHY_PREFS_UI_AVATAR_SIZE);
+}
+
 
 static const gchar *
 get_alias (EmpathyRosterContact *self)
@@ -126,7 +134,7 @@ avatar_loaded_cb (GObject *source,
   if (pixbuf == NULL)
     {
       pixbuf = tpaw_pixbuf_from_icon_name_sized (
-          TPAW_IMAGE_AVATAR_DEFAULT, AVATAR_SIZE);
+          TPAW_IMAGE_AVATAR_DEFAULT, avatar_size(self));
     }
 
   gtk_image_set_from_pixbuf (GTK_IMAGE (self->priv->avatar), pixbuf);
@@ -142,7 +150,7 @@ static void
 update_avatar (EmpathyRosterContact *self)
 {
   empathy_pixbuf_avatar_from_individual_scaled_async (self->priv->individual,
-      AVATAR_SIZE, AVATAR_SIZE, NULL, avatar_loaded_cb,
+      avatar_size(self), avatar_size(self), NULL, avatar_loaded_cb,
       tp_weak_ref_new (self, NULL, NULL));
 }
 
@@ -396,6 +404,7 @@ empathy_roster_contact_init (EmpathyRosterContact *self)
 
   self->priv = G_TYPE_INSTANCE_GET_PRIVATE (self,
       EMPATHY_TYPE_ROSTER_CONTACT, EmpathyRosterContactPriv);
+  self->priv->gsettings_ui = g_settings_new (EMPATHY_PREFS_UI_SCHEMA);
 
   alig = gtk_alignment_new (0.5, 0.5, 1, 1);
   gtk_widget_show (alig);
@@ -406,7 +415,8 @@ empathy_roster_contact_init (EmpathyRosterContact *self)
   /* Avatar */
   self->priv->avatar = gtk_image_new ();
 
-  gtk_widget_set_size_request (self->priv->avatar, AVATAR_SIZE, AVATAR_SIZE);
+  gtk_widget_set_size_request (self->priv->avatar, avatar_size(self),
+      avatar_size(self));
 
   gtk_box_pack_start (GTK_BOX (main_box), self->priv->avatar, FALSE, FALSE, 0);
   gtk_widget_show (self->priv->avatar);
